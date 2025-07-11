@@ -4,6 +4,7 @@ from django.shortcuts import render
 from openai import OpenAI
 from django.http import JsonResponse
 from .models import Chat
+from utils.markdown_to_html import markdown_to_html
 
 
 load_dotenv(
@@ -34,7 +35,7 @@ def response(request):
     """
     if request.method == 'POST':
         message = request.POST.get('message', '')
-        
+
         completion = client.chat.completions.create(
             model=os.getenv('OPENAI_AI_MODEL', 'gpt-4o'),
             messages=[
@@ -48,7 +49,9 @@ def response(request):
                 }
             ]
         )
-        response = completion.choices[0].message.content.strip()
+        response_raw = completion.choices[0].message.content.strip()
+        response = markdown_to_html(response_raw)
+
         new_chat = Chat(message=message, response=response)
         new_chat.save()
         return JsonResponse({'response': response})

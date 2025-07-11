@@ -35,7 +35,7 @@ chatForm.addEventListener('submit', function(event) {
 
             const messageElementAi = document.createElement('div');
             messageElementAi.classList.add('message', 'ai');
-            messageElementAi.textContent = response;
+            messageElementAi.innerHTML = DOMPurify.sanitize(response);
 
             messageWrapperAi.appendChild(messageElementAi);
             chatHistory.appendChild(messageWrapperAi);
